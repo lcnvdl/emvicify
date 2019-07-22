@@ -20,7 +20,7 @@ async function start(baseFolder, port, expressApp) {
                 Object.values(modules.routers).forEach(router => router.register(app));
 
                 app.listen(port, () => {
-                    resolve();
+                    resolve(modules);
                 });
             }, err => {
                 reject(err);

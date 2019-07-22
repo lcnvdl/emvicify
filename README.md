@@ -1,2 +1,3 @@
-# emvicify
-Emvicify
+# Emvicify
+
+Core Library for Emvicify Framework

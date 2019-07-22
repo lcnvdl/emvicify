@@ -1,12 +1,9 @@
 const path = require('path');
 const fs = require('fs');
-const environment = require("../environments/environment");
 
 async function importModule(baseFolder, name, modules) {
     await importFiles(baseFolder, name, f => {
         modules[name][getName(f)] = new (require(f))(modules);
-
-        environment.systemTrace && console.log(name + " <- added '" + getName(f) + "'");
     });
 }
 

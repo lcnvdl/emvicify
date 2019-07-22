@@ -1,5 +1,5 @@
 const { start } = require("./application");
-const controllers = require("../middlewares/controllers");
+const controllers = require("../controllers/controllers");
 const middlewares = require("../middlewares/middlewares");
 const services = require("../services/services");
 const routers = require("../routers/routers");

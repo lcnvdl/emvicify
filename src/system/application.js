@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
 
@@ -10,7 +9,9 @@ const modules = {
     middlewares: {}
 };
 
-async function start(baseFolder, settings) {
+async function start(baseFolder, port, expressApp) {
+
+    let app = expressApp || express();
 
     return new Promise((resolve, reject) => {
         asyncForEach(
@@ -18,7 +19,7 @@ async function start(baseFolder, settings) {
             name => importModule(baseFolder, name, modules)).then(() => {
                 Object.values(modules.routers).forEach(router => router.register(app));
 
-                app.listen(settings.port, () => {
+                app.listen(port, () => {
                     resolve();
                 });
             }, err => {

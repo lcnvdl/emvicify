@@ -1,5 +1,5 @@
 class BaseController {
-    constructor({ services, middlewares }) {
+    constructor({ services }) {
         this.services = services;
     }
 }

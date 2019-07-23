@@ -9,9 +9,20 @@ const modules = {
     middlewares: {}
 };
 
-async function start(baseFolder, port, expressApp) {
+async function start(
+    baseFolder, 
+    port, 
+    { 
+        expressApp, 
+        configureAppBeforeServe 
+    }) {
 
-    let app = expressApp || express();
+    const app = expressApp || express();
+    const http = require("http").Server(app);
+
+    if (configureAppBeforeServe) {
+        configureAppBeforeServe(app, http);
+    }
 
     return new Promise((resolve, reject) => {
         asyncForEach(
@@ -20,7 +31,7 @@ async function start(baseFolder, port, expressApp) {
                 Object.values(modules.routers).forEach(router => router.register(app));
 
                 app.listen(port, () => {
-                    resolve(modules);
+                    resolve({ app, http, modules });
                 });
             }, err => {
                 reject(err);

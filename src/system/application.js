@@ -30,7 +30,7 @@ async function start(
             name => importModule(baseFolder, name, modules)).then(() => {
                 Object.values(modules.routers).forEach(router => router.register(app));
 
-                app.listen(port, () => {
+                http.listen(port, () => {
                     resolve({ app, http, modules });
                 });
             }, err => {

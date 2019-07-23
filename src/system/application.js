@@ -10,12 +10,11 @@ const modules = {
 };
 
 async function start(
-    baseFolder, 
-    port, 
-    { 
-        expressApp, 
-        configureAppBeforeServe 
-    }) {
+    baseFolder,
+    port,
+    extra) {
+
+    let { expressApp = null, configureAppBeforeServe = null } = extra || {};
 
     const app = expressApp || express();
     const http = require("http").Server(app);

@@ -11,6 +11,11 @@ function importFiles(baseFolder, folder, fn) {
     return new Promise((resolve, reject) => {
         const directoryPath = path.join(baseFolder, "src", folder);
 
+        if (!fs.existsSync(directoryPath)) {
+            resolve();
+            return;
+        }
+
         fs.readdir(directoryPath, (err, files) => {
             if (err) {
                 reject(err);

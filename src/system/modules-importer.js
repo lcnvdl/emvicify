@@ -2,14 +2,18 @@ const path = require('path');
 const fs = require('fs');
 
 async function importModule(baseFolder, name, modules) {
-    await importFiles(baseFolder, name, f => {
+    await importFiles(baseFolder, "src", name, f => {
+        modules[name][getName(f)] = new (require(f))(modules);
+    });
+    
+    await importFiles(baseFolder, "app", name, f => {
         modules[name][getName(f)] = new (require(f))(modules);
     });
 }
 
-function importFiles(baseFolder, folder, fn) {
+function importFiles(baseFolder, appFolder, folder, fn) {
     return new Promise((resolve, reject) => {
-        const directoryPath = path.join(baseFolder, "src", folder);
+        const directoryPath = path.join(baseFolder, appFolder, folder);
 
         if (!fs.existsSync(directoryPath)) {
             resolve();

@@ -3,6 +3,7 @@ const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const path = require("path");
 
 const modules = {
     settings: {},
@@ -14,8 +15,13 @@ const modules = {
     plugins: []
 };
 
-function loadSettings(fileName) {
+function loadSettings(baseFolder, fileName) {
     fileName = fileName || "./settings.json";
+
+    if (fileName.indexOf("./") === 0) {
+        fileName = path.join(baseFolder, fileName);
+    }
+
     if (fs.existsSync(fileName)) {
         modules.settings = Object.assign({}, require(fileName));
     }
@@ -34,7 +40,7 @@ async function start(
         expressSettings = {} 
     } = extra || {};
 
-    loadSettings(settingsFile);
+    loadSettings(baseFolder, settingsFile);
 
     const app = expressApp || express();
     const http = require("http").Server(app);

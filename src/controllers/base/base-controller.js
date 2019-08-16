@@ -1,6 +1,7 @@
 class BaseController {
-    constructor({ services }) {
+    constructor({ settings, services }) {
         this.services = services;
+        this.settings = settings;
     }
 }
 

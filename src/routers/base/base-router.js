@@ -1,7 +1,8 @@
 class BaseRouter {
-    constructor({ controllers, middlewares }) {
+    constructor({ settings, controllers, middlewares }) {
         this.middlewares = middlewares;
         this.controllers = controllers;
+        this.settings = settings;
     }
 
     register(_app) {

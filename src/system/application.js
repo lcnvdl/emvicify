@@ -2,8 +2,10 @@ const express = require("express");
 const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 
 const modules = {
+    settings: {},
     services: {},
     controllers: {},
     routers: {},
@@ -12,17 +14,27 @@ const modules = {
     plugins: []
 };
 
+function loadSettings(fileName) {
+    fileName = fileName || "./settings.json";
+    if (fs.existsSync(fileName)) {
+        modules.settings = Object.assign({}, require(fileName));
+    }
+}
+
 async function start(
     baseFolder,
     port,
     extra) {
 
     let {
+        settingsFile = null,
         expressApp = null, 
         configureAppBeforeServe = null, 
         plugins = [], 
         expressSettings = {} 
     } = extra || {};
+
+    loadSettings(settingsFile);
 
     const app = expressApp || express();
     const http = require("http").Server(app);

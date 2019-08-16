@@ -1,5 +1,5 @@
 class BaseMiddleware {
-    generate() {
+    generate(_options) {
         throw new Error("Abstract method");
     }
 }

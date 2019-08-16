@@ -1,6 +1,7 @@
 const express = require("express");
 const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
+const bodyParser = require("body-parser");
 
 const modules = {
     services: {},
@@ -16,13 +17,23 @@ async function start(
     port,
     extra) {
 
-    let { expressApp = null, configureAppBeforeServe = null, plugins = [] } = extra || {};
+    let {
+        expressApp = null, 
+        configureAppBeforeServe = null, 
+        plugins = [], 
+        expressSettings = {} 
+    } = extra || {};
 
     const app = expressApp || express();
     const http = require("http").Server(app);
 
     if (configureAppBeforeServe) {
         configureAppBeforeServe(app, http);
+
+        if (expressSettings.json) {
+            app.use(bodyParser.json());
+            app.use(bodyParser.urlencoded({ extended: true }));
+        }
     }
 
     modules.plugins = plugins;

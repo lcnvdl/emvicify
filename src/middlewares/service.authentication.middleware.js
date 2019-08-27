@@ -12,7 +12,7 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
     generate() {
         return (req, res, next) => {
             let authString = req.headers.authorization;
-            
+
             if (!authString || authString === "") {
                 res.status(403).json({
                     error: "Forbidden",
@@ -20,16 +20,26 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
                 });
             }
 
-            this.authenticationService.validateRequest(this.processForService(authString)).then(info => {
-                req.locals = req.locals || {};
-                req.locals.auth = info;
-                next();
-            }, err => {
-                res.status(401).json({
-                    error: err,
-                    status: 401
+            try {
+                let request = this.processForService(authString);
+
+                this.authenticationService.validateRequest(request).then(info => {
+                    req.locals = req.locals || {};
+                    req.locals.auth = info;
+                    next();
+                }, err => {
+                    res.status(401).json({
+                        error: err,
+                        status: 401
+                    });
                 });
-            });
+            }
+            catch (err) {
+                res.status(500).json({
+                    error: err,
+                    status: 500
+                });
+            }
         };
     }
 }

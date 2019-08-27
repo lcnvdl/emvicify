@@ -2,9 +2,13 @@ const ServiceAuthenticationMiddleware = require("./service.authentication.middle
 
 class BasicAuthenticationMiddleware extends ServiceAuthenticationMiddleware {
     processForService(encodedString) {
+        if (!encodedString || encodedString.indexOf(" ") === -1) {
+            throw new Error("Invalid authorization header.")
+        }
+
         let header = encodedString.split(" ");
         if (header[0] !== "Basic") {
-            throw new Error("Invalid authorization header. It must be 'Basic'.")
+            throw new Error("Invalid authorization header.")
         }
 
         let authString = Buffer.from(header[1], "base64").toString().split(":");

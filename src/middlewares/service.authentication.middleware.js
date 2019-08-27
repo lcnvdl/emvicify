@@ -10,7 +10,7 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
     }
 
     generate() {
-        return function (req, res, next) {
+        return (req, res, next) => {
             let authString = req.headers.authorization;
             if (!authString || authString === "") {
                 res.status(403).json({

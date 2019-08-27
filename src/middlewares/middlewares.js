@@ -1,5 +1,7 @@
 module.exports = {
     BaseMiddleware: require("./base/base-middleware"),
-    JwtMiddleware: require("./jwt.middleware"),
+    JwtAuthenticationMiddleware: require("./jwt.authentication.middleware"),
+    BasicServiceAuthenticationMiddleware: require("./basic.service.authentication.middleware"),
+    ServiceAuthenticationMiddleware: require("./service.authentication.middleware"),
     AuthMiddleware: require("./auth.middleware")
 };

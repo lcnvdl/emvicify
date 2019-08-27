@@ -12,6 +12,7 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
     generate() {
         return (req, res, next) => {
             let authString = req.headers.authorization;
+            
             if (!authString || authString === "") {
                 res.status(403).json({
                     error: "Forbidden",
@@ -20,7 +21,8 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
             }
 
             this.authenticationService.validateRequest(this.processForService(authString)).then(info => {
-                res.locals.auth = info;
+                req.locals = req.locals || {};
+                req.locals.auth = info;
                 next();
             }, err => {
                 res.status(401).json({

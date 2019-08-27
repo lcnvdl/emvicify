@@ -23,7 +23,7 @@ function loadSettings(baseFolder, fileName) {
     }
 
     if (fs.existsSync(fileName)) {
-        modules.settings = Object.assign({}, require(fileName));
+        modules.settings = Object.assign({}, JSON.parse(fs.readFileSync(fileName)));
     }
 }
 
@@ -34,13 +34,18 @@ async function start(
 
     let {
         settingsFile = null,
-        expressApp = null, 
-        configureAppBeforeServe = null, 
-        plugins = [], 
-        expressSettings = {} 
+        expressApp = null,
+        configureAppBeforeServe = null,
+        plugins = [],
+        expressSettings = {}
     } = extra || {};
 
-    loadSettings(baseFolder, settingsFile);
+    if (typeof settingsFile === "string") {
+        loadSettings(baseFolder, settingsFile);
+    }
+    else if (typeof settingsFile === "object") {
+        modules.settings = settingsFile;
+    }
 
     const app = expressApp || express();
     const http = require("http").Server(app);

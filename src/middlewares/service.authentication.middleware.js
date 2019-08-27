@@ -19,7 +19,7 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
                 });
             }
 
-            this.authenticationService.validateRequest(processForService(authString)).then(info => {
+            this.authenticationService.validateRequest(this.processForService(authString)).then(info => {
                 res.locals.auth = info;
                 next();
             }, err => {

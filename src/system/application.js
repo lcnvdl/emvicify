@@ -52,11 +52,11 @@ async function start(
 
     if (configureAppBeforeServe) {
         configureAppBeforeServe(app, http);
+    }
 
-        if (expressSettings.json) {
-            app.use(bodyParser.json());
-            app.use(bodyParser.urlencoded({ extended: true }));
-        }
+    if (expressSettings.json) {
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
     }
 
     modules.plugins = plugins;

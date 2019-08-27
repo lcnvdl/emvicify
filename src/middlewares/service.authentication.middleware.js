@@ -14,7 +14,7 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
             let authString = req.headers.authorization;
 
             if (!authString || authString === "") {
-                res.status(403).json({
+                return res.status(403).json({
                     error: "Forbidden",
                     status: 403
                 });

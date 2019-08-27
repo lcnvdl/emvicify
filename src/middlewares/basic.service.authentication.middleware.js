@@ -2,7 +2,7 @@ const ServiceAuthenticationMiddleware = require("./service.authentication.middle
 
 class BasicAuthenticationMiddleware extends ServiceAuthenticationMiddleware {
     processForService(encodedString) {
-        let authString = atob(encodedString).split(":");
+        let authString = Buffer.from(encodedString, "base64").toString().split(":");
         return {
             user: authString[0],
             password: authString[1]

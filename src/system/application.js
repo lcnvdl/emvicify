@@ -12,7 +12,7 @@ const modules = {
     routers: {},
     middlewares: {},
     drivers: {},
-    plugins: []
+    plugins: {}
 };
 
 function loadSettings(baseFolder, fileName) {
@@ -36,7 +36,6 @@ async function start(
         settingsFile = null,
         expressApp = null,
         configureAppBeforeServe = null,
-        plugins = [],
         expressSettings = {}
     } = extra || {};
 
@@ -59,24 +58,22 @@ async function start(
         app.use(bodyParser.urlencoded({ extended: true }));
     }
 
-    modules.plugins = plugins;
-
-    plugins
-        .filter(p => p.events && p.events.configureAppBeforeServe)
-        .forEach(p => p.events.configureAppBeforeServe({ app, http, modules }));
-
     return new Promise((resolve, reject) => {
         asyncForEach(
-            ["middlewares", "services", "controllers", "routers"],
+            ["middlewares", "services", "controllers", "routers", "plugins"],
             name => importModule(baseFolder, name, modules)).then(() => {
                 Object.values(modules.routers).forEach(router => router.register(app));
 
+                Object.values(modules.plugins)
+                    .filter(p => p.events && p.events.configureAppBeforeServe)
+                    .forEach(p => p.events.configureAppBeforeServe({ app, http, modules }));
+
                 http.listen(port, () => {
-                    plugins
+                    Object.values(modules.plugins)
                         .filter(p => p.events && p.events.appStarted)
                         .forEach(p => p.events.appStarted({ app, http, modules }));
 
-                    resolve({ app, http, modules });
+                    resolve({ baseFolder, app, http, modules });
                 });
             }, err => {
                 reject(err);

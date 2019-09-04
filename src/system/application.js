@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 const modules = {
+    settingsPath: "",
     settings: {},
     services: {},
     controllers: {},
@@ -25,6 +26,8 @@ function loadSettings(baseFolder, fileName) {
     if (fs.existsSync(fileName)) {
         modules.settings = Object.assign({}, JSON.parse(fs.readFileSync(fileName)));
     }
+
+    modules.settingsPath = fileName;
 }
 
 async function start(

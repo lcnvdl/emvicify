@@ -6,7 +6,7 @@ async function importModule(baseFolder, name, modules) {
     await importFiles(baseFolder, "src", name, f => {
         modules[name][getMemberName(f)] = new (require(f))(modules);
     });
-    
+
     await importFiles(baseFolder, "app", name, f => {
         modules[name][getMemberName(f)] = new (require(f))(modules);
     });
@@ -29,7 +29,12 @@ function importFiles(baseFolder, appFolder, folder, fn) {
 
             files.filter(file => file.indexOf(".js") !== -1).forEach((file) => {
                 let fullPath = path.join(directoryPath, file);
-                fn(fullPath);
+                try {
+                    fn(fullPath);
+                }
+                catch (err) {
+                    reject(`Error importing ${file}. ${err}.`);
+                }
             });
 
             resolve();

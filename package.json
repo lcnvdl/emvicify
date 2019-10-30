@@ -1,6 +1,6 @@
 {
   "name": "emvicify",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "Core Library for Emvicify Framework",
   "main": "index.js",
   "scripts": {

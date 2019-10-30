@@ -56,9 +56,24 @@ async function start(
         configureAppBeforeServe(app, http);
     }
 
-    if (expressSettings.json) {
+    if (expressSettings.json || expressSettings.bodyParserJson) {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
+    }
+
+    if (expressSettings.bodyParserJson) {
+        let options = (typeof expressSettings.bodyParserJson !== "object") ? null : expressSettings.bodyParserJson;
+        app.use(bodyParser.json(options));
+    }
+
+    if (expressSettings.bodyParserUrlencoded) {
+        let options = (typeof expressSettings.bodyParserUrlencoded !== "object") ? { extended: true } : expressSettings.bodyParserUrlencoded;
+        app.use(bodyParser.urlencoded(options));
+    }
+
+    if (expressSettings.bodyParserRaw) {
+        let options = (typeof expressSettings.bodyParserRaw !== "object") ? null : expressSettings.bodyParserUrlencoded;
+        app.use(bodyParser.raw(options));
     }
 
     return new Promise((resolve, reject) => {

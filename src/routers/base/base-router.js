@@ -4,13 +4,21 @@ class BaseRouter {
         this.controllers = controllers;
         this.settings = settings;
         this.routerSettings = routerSettings || {};
+        this.app = null;
     }
 
     register(_app) {
+        this.app = _app;
+        this.this.registerActions();
+    }
+
+    registerActions() {
         throw new Error("Abstract method");
     }
 
-    post(app, url, action, middlewares) {
+    post(url, action, middlewares, app) {
+        app = app || this.app;
+
         if (!middlewares) {
             app.post(url, (req, res) => {
                 let result = action(req, res);
@@ -25,7 +33,9 @@ class BaseRouter {
         }
     }
 
-    get(app, url, action, middlewares) {
+    get(url, action, middlewares, app) {
+        app = app || this.app;
+
         if (!middlewares) {
             app.get(url, (req, res) => {
                 let result = action(req, res);

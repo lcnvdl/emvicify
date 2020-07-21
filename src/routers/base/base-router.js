@@ -9,7 +9,7 @@ class BaseRouter {
 
     register(_app) {
         this.app = _app;
-        this.this.registerActions();
+        this.registerActions();
     }
 
     registerActions() {

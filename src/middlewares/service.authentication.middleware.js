@@ -9,9 +9,13 @@ class ServiceAuthenticationMiddleware extends BaseMiddleware {
         return authString;
     }
 
+    getAuthStringFromHeaders(headers) {
+        return headers.authorization;
+    }
+
     generate() {
         return (req, res, next) => {
-            let authString = req.headers.authorization;
+            let authString = this.getAuthStringFromHeaders(req.headers);
 
             if (!authString || authString === "") {
                 return res.status(403).json({

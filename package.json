@@ -9,7 +9,8 @@
   "author": "lcnvdl",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "mocha": "^8.1.3"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

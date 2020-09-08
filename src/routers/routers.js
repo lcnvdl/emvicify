@@ -1,3 +1,5 @@
 module.exports = {
-    BaseRouter: require("./base/base-router")
+    //  @deprecated
+    BaseRouter: require("./base/base-router"),
+    ExpressRouter: require("./base/express-router")
 };

@@ -16,7 +16,7 @@ class ExpressRouter extends AbstractRouter {
     post(url, action, middlewares, app) {
         app = app || this.app;
 
-        if (url && url[0] !== "/") {
+        if (url === "" || (url && url[0] !== "/")) {
             url = this.baseUrl + url;
         }
 
@@ -37,7 +37,7 @@ class ExpressRouter extends AbstractRouter {
     get(url, action, middlewares, app) {
         app = app || this.app;
 
-        if (url && url[0] !== "/") {
+        if (url === "" || (url && url[0] !== "/")) {
             url = this.baseUrl + url;
         }
 

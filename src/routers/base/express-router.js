@@ -1,5 +1,8 @@
 const AbstractRouter = require("./abstract-router");
 
+/**
+ * Router for Express JS.
+ */
 class ExpressRouter extends AbstractRouter {
     constructor(objects) {
         super(objects);

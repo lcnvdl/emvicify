@@ -1,5 +1,6 @@
 class AbstractRouter {
     constructor({ settings, controllers, middlewares, routerSettings }) {
+        this.baseUrl = "/";
     }
 
     registerActions() {

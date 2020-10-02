@@ -13,6 +13,10 @@ class ExpressRouter extends AbstractRouter {
     post(url, action, middlewares, app) {
         app = app || this.app;
 
+        if (url && url[0] !== "/") {
+            url = this.baseUrl + url;
+        }
+
         if (!middlewares) {
             app.post(url, (req, res) => {
                 let result = action(req, res);
@@ -29,6 +33,10 @@ class ExpressRouter extends AbstractRouter {
 
     get(url, action, middlewares, app) {
         app = app || this.app;
+
+        if (url && url[0] !== "/") {
+            url = this.baseUrl + url;
+        }
 
         if (!middlewares) {
             app.get(url, (req, res) => {

@@ -1,4 +1,5 @@
 /** @typedef {import("../../system/engines/rabbitmq-engine")} RabbitEngine */
+/** @typedef {import("../../system/engines/models/request-model")} RequestModel */
 
 const AbstractRouter = require("./abstract-router");
 
@@ -21,8 +22,26 @@ class AmqpRouter extends AbstractRouter {
         }
 
         this.engine = amqpEngine;
+        this.engine.onReceive((request, callback) => this._process(request, callback));
 
         this.registerActions();
+    }
+
+    /**
+     * @param {RequestModel} request Request
+     * @param {Function} [callback] 
+     */
+    async _process(request, callback) {
+        const action = this.actions[request.url];
+        if (action) {
+            const reply = action(request);
+
+            if (reply instanceof Promise) {
+                reply = await reply;
+            }
+
+            callback(reply);
+        }
     }
 
     registerAction(url, fn) {
@@ -126,7 +145,7 @@ class AmqpRouter extends AbstractRouter {
             url = url.substr(0, url.length - 1);
         }
 
-        return url.ToLowerInvariant();
+        return url.toLowerCase();
     }
 }
 

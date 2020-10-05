@@ -1,6 +1,7 @@
 const BaseEngine = require("../base/base-engine");
-const RequestModel = require("./models/request-model");
 const AsyncHelper = require("../../helpers/async.helper");
+const EventEmitter = require('events');
+const RequestModel = require("./models/request-model");
 
 class RabbitMQEngine extends BaseEngine {
     constructor(amqp, amqpSettings) {
@@ -15,6 +16,7 @@ class RabbitMQEngine extends BaseEngine {
         this.waiting = {};
         this.multipleMessages = false;
         this.ackMode = null;
+        this.events = new EventEmitter();
     }
 
     get identifier() {
@@ -73,8 +75,32 @@ class RabbitMQEngine extends BaseEngine {
     prepare() {
     }
 
+    onReceive(listener) {
+        this.events.on("receive", listener);
+    }
+
+    /**
+     * @param {RequestModel} message 
+     * @param {boolean} waitForAnswer 
+     * @returns {Promise<RequestModel>}
+     */
+    triggerReceive(message, waitForAnswer) {
+        return new Promise((resolve, reject) => {
+            this.events.emit("receive", message, reply => {
+                resolve(reply);
+            });
+
+            if (!waitForAnswer) {
+                resolve(null);
+            }
+            else {
+                setTimeout(() => reject("Timeout"), 5000);
+            }
+        });
+    }
+
     async _connect() {
-        this.connection = await this.amqp.connect(url);
+        this.connection = await this.amqp.connect(this.url);
         process.once('SIGINT', () => this.connection.close.bind(this.connection));
     }
 
@@ -87,10 +113,13 @@ class RabbitMQEngine extends BaseEngine {
     }
 
     async _processMessage(msg, properties) {
-        const reply = null;
+        const request = RequestModel.parse(msg);
+
+        const reply = await this.triggerReceive(request, this.isBidirectional && properties.replyTo);
 
         if (this.isBidirectional && reply) {
-            this.channel.sendToQueue(properties.replyTo,
+            this.channel.sendToQueue(
+                properties.replyTo,
                 Buffer.from(reply.toString()), {
                 correlationId: properties.correlationId
             });

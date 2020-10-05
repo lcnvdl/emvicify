@@ -2,13 +2,13 @@ class RequestModel {
     /**
      * @param {string} id Id
      * @param {string} url Url
-     * @param {any} [datos] Datos
+     * @param {any} [data] Data
      * @param {any} [headers] Headers
      */
-    constructor(id, url, datos, headers) {
+    constructor(id, url, data, headers) {
         this.id = id;
         this.url = url;
-        this.datos = datos || {};
+        this.data = data || {};
         this.headers = headers || {};
     }
 
@@ -19,6 +19,11 @@ class RequestModel {
 
     toString() {
         return JSON.stringify(this);
+    }
+
+    static parse(str) {
+        const { id, url, data, headers } = JSON.parse(str);
+        return new RequestModel(id, url, data, headers);
     }
 }
 

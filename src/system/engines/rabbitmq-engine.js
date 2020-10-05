@@ -41,7 +41,7 @@ class RabbitMQEngine extends BaseEngine {
             url += "amqp://";
         }
         else {
-            url += protocol + "://";
+            url += this.settings.protocol + "://";
         }
 
         if (this.settings.user) {
@@ -56,13 +56,13 @@ class RabbitMQEngine extends BaseEngine {
 
         if (this.settings.host) {
             url += this.settings.host;
-
-            if (this.settings.port) {
-                url += ":" + this.settings.port;
-            }
         }
         else {
             url += "localhost";
+        }
+
+        if (this.settings.port) {
+            url += ":" + this.settings.port;
         }
 
         if (this.settings.vhost) {

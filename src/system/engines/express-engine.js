@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const BaseEngine = require("./base/base-engine");
+const BaseEngine = require("../base/base-engine");
 
 class ExpressEngine extends BaseEngine {
     constructor(expressApp, port, expressSettings) {

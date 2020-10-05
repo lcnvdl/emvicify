@@ -1,28 +1,34 @@
-/** @typedef {import("../../system/engines/express-engine")} ExpressEngine */
+/** @typedef {import("../../system/engines/rabbitmq-engine")} RabbitEngine */
 
 const AbstractRouter = require("./abstract-router");
 
 /**
  * Router for Express JS.
  */
-class ExpressRouter extends AbstractRouter {
+class AmqpRouter extends AbstractRouter {
     constructor(objects) {
         super(objects);
 
         this.app = null;
-        /** @type {ExpressEngine} */
+        /** @type {RabbitEngine} */
         this.engine = null;
+        this.actions = {};
     }
 
-    register({ expressEngine }) {
-        if (!expressEngine) {
+    register({ amqpEngine }) {
+        if (!amqpEngine) {
             return;
         }
 
-        this.engine = expressEngine;
-        this.app = expressEngine.app;
+        this.engine = amqpEngine;
 
         this.registerActions();
+    }
+
+    registerAction(url, fn) {
+        url = this._normalizeUrl(url);
+
+        this.actions[url] = fn;
     }
 
     post(url, action, middlewares, app) {
@@ -107,6 +113,21 @@ class ExpressRouter extends AbstractRouter {
             res.status(500).json({ error });
         }
     }
+
+    /**
+     * @param {string} url 
+     */
+    _normalizeUrl(url) {
+        while (url.startsWith("/")) {
+            url = url.substr(1);
+        }
+
+        while (url.endsWith("/")) {
+            url = url.substr(0, url.length - 1);
+        }
+
+        return url.ToLowerInvariant();
+    }
 }
 
-module.exports = ExpressRouter;
+module.exports = AmqpRouter;

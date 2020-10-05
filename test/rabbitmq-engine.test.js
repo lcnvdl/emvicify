@@ -1,17 +1,17 @@
 const { expect } = require("chai");
-const ExpressEngine = require("../src/system/engines/express-engine");
+const RabbitMQEngine = require("../src/system/engines/rabbitmq-engine");
 
-describe("Express Engine", () => {
+describe("RabbitMQ Engine", () => {
     describe("constructor", () => {
         it("should work fine", () => {
-            const engine = new ExpressEngine();
+            const engine = new RabbitMQEngine();
             expect(engine).to.be.ok;
         });
     });
 
     describe("prepare", () => {
         it("should work fine", () => {
-            const engine = new ExpressEngine();
+            const engine = new RabbitMQEngine();
             engine.prepare();
         });
     });

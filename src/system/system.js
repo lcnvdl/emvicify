@@ -4,6 +4,7 @@ const middlewares = require("../middlewares/middlewares");
 const services = require("../services/services");
 const routers = require("../routers/routers");
 const helpers = require("../helpers/helpers");
+const engines = require("./engines/engines");
 
 module.exports = {
     start,
@@ -11,5 +12,6 @@ module.exports = {
     middlewares,
     services,
     helpers,
-    routers
+    routers,
+    engines
 };

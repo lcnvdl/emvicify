@@ -1,7 +1,7 @@
 const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
 
-const ExpressEngine = require("./express-engine");
+const ExpressEngine = require("./engines/express-engine");
 
 const fs = require("fs");
 const path = require("path");

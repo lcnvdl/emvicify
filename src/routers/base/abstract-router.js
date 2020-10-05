@@ -17,6 +17,9 @@ class AbstractRouter {
         }
     }
 
+    /**
+     * @abstract
+     */
     registerActions() {
         throw new Error("Abstract method");
     }

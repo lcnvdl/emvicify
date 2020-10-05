@@ -2,7 +2,7 @@ class AbstractRouter {
     constructor({ settings, controllers, middlewares, routerSettings }) {
         this.controllers = controllers;
         this.middlewares = middlewares;
-        this.routerSettings = routerSettings;
+        this.routerSettings = routerSettings || {};
         this.settings = settings;
 
         if (settings && settings.baseUrl) {

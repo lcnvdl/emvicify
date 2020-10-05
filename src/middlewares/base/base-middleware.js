@@ -3,6 +3,10 @@ class BaseMiddleware {
         this.services = services;
     }
 
+    /**
+     * @abstract
+     * @param {*} _options Options
+     */
     generate(_options) {
         throw new Error("Abstract method");
     }

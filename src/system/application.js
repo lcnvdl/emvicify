@@ -1,7 +1,8 @@
-const express = require("express");
 const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
-const bodyParser = require("body-parser");
+
+const ExpressEngine = require("./express-engine");
+
 const fs = require("fs");
 const path = require("path");
 
@@ -30,6 +31,11 @@ function loadSettings(baseFolder, fileName) {
     modules.settingsPath = fileName;
 }
 
+class EmvicifyApplication {
+    constructor() {
+    }
+}
+
 async function start(
     baseFolder,
     port,
@@ -39,7 +45,9 @@ async function start(
         settingsFile = null,
         expressApp = null,
         configureAppBeforeServe = null,
-        expressSettings = {}
+        expressSettings = {},
+        testMode = false,
+        engines = []
     } = extra || {};
 
     if (typeof settingsFile === "string") {
@@ -49,49 +57,43 @@ async function start(
         modules.settings = settingsFile;
     }
 
-    const app = expressApp || express();
-    const http = require("http").Server(app);
+    const allEngines = {};
+
+    if (engines.length === 0) {
+        engines.push(new ExpressEngine(expressApp, port, expressSettings));
+    }
+
+    engines.forEach(m => {
+        m.prepare();
+        allEngines[m.identifier] = m;
+    });
 
     if (configureAppBeforeServe) {
-        configureAppBeforeServe(app, http);
-    }
-
-    if (expressSettings.json || expressSettings.bodyParserJson) {
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
-    }
-
-    if (expressSettings.bodyParserJson) {
-        let options = (typeof expressSettings.bodyParserJson !== "object") ? null : expressSettings.bodyParserJson;
-        app.use(bodyParser.json(options));
-    }
-
-    if (expressSettings.bodyParserUrlencoded) {
-        let options = (typeof expressSettings.bodyParserUrlencoded !== "object") ? { extended: true } : expressSettings.bodyParserUrlencoded;
-        app.use(bodyParser.urlencoded(options));
-    }
-
-    if (expressSettings.bodyParserRaw) {
-        let options = (typeof expressSettings.bodyParserRaw !== "object") ? null : expressSettings.bodyParserUrlencoded;
-        app.use(bodyParser.raw(options));
+        configureAppBeforeServe(allEngines);
     }
 
     return new Promise((resolve, reject) => {
         asyncForEach(
             ["middlewares", "services", "controllers", "routers", "plugins"],
             name => importModule(baseFolder, name, modules)).then(() => {
-                Object.values(modules.routers).forEach(router => router.register(app));
+                Object.values(modules.routers).forEach(router => router.register(allEngines));
 
                 Object.values(modules.plugins)
                     .filter(p => p.events && p.events.configureAppBeforeServe)
-                    .forEach(p => p.events.configureAppBeforeServe({ app, http, modules }));
+                    .forEach(p => p.events.configureAppBeforeServe({ modules, engines: allEngines }));
 
-                http.listen(port, () => {
+                Promise.all(Object.keys(allEngines).map(k => allEngines[k].serve())).then(() => {
                     Object.values(modules.plugins)
                         .filter(p => p.events && p.events.appStarted)
-                        .forEach(p => p.events.appStarted({ app, http, modules }));
+                        .forEach(p => p.events.appStarted({ modules, engines: allEngines }));
 
-                    resolve({ baseFolder, app, http, modules });
+                    if (testMode) {
+                        process.exit(0);
+                    }
+
+                    resolve({ baseFolder, engines: allEngines, modules });
+                }, err => {
+                    reject(err);
                 });
             }, err => {
                 reject(err);
@@ -100,5 +102,6 @@ async function start(
 }
 
 module.exports = {
-    start
+    start,
+    EmvicifyApplication
 };

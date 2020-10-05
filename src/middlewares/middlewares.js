@@ -1,7 +1,13 @@
+const BaseMiddleware = require("./base/base-middleware");
+const JwtAuthenticationMiddleware = require("./jwt.authentication.middleware");
+const BasicServiceAuthenticationMiddleware = require("./basic.service.authentication.middleware");
+const ServiceAuthenticationMiddleware = require("./service.authentication.middleware");
+const AuthMiddleware = require("./auth.middleware");
+
 module.exports = {
-    BaseMiddleware: require("./base/base-middleware"),
-    JwtAuthenticationMiddleware: require("./jwt.authentication.middleware"),
-    BasicServiceAuthenticationMiddleware: require("./basic.service.authentication.middleware"),
-    ServiceAuthenticationMiddleware: require("./service.authentication.middleware"),
-    AuthMiddleware: require("./auth.middleware")
+    BaseMiddleware,
+    JwtAuthenticationMiddleware,
+    BasicServiceAuthenticationMiddleware,
+    ServiceAuthenticationMiddleware,
+    AuthMiddleware
 };

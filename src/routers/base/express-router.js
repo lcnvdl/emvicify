@@ -1,3 +1,5 @@
+/** @typedef {import("../../system/express-engine")} ExpressEngine */
+
 const AbstractRouter = require("./abstract-router");
 
 /**
@@ -6,10 +8,20 @@ const AbstractRouter = require("./abstract-router");
 class ExpressRouter extends AbstractRouter {
     constructor(objects) {
         super(objects);
+
+        this.app = null;
+        /** @type {ExpressEngine} */
+        this.engine = null;
     }
 
-    register(_app) {
-        this.app = _app;
+    register({ expressEngine }) {
+        if (!expressEngine) {
+            return;
+        }
+
+        this.engine = expressEngine;
+        this.app = expressEngine.app;
+
         this.registerActions();
     }
 

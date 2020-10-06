@@ -109,7 +109,15 @@ class RabbitMQEngine extends BaseEngine {
     }
 
     async _createCommunicationModel() {
-        await this._createCommunicationModelAsSender();
+        if (this.model.mode === "sender") {
+            await this._createCommunicationModelAsSender();
+        }
+        else if (this.model.mode === "receiver") {
+            await this._createCommunicationModelAsReceiver();
+        }
+        else {
+            throw new Error("Invalid communication model mode. It must be 'sender' or 'receiver'.");
+        }
     }
 
     async _processMessage(msg, properties) {
@@ -228,6 +236,10 @@ class RabbitMQEngine extends BaseEngine {
         //  Model 1 <-> C:      C1 sends a message to a client C2, and receives the answer. 
         //                          In order to receive an answer, C1 creates a Qx, and sends the
         //                          id in the message. C2 replies directly to Qx.
+
+        if (!this.model) {
+            throw new Error("Communication model is not defined");
+        }
 
         const name = this.model.name;
         const bidirectional = name.includes("<->");

@@ -2,6 +2,7 @@ const BaseEngine = require("../base/base-engine");
 const AsyncHelper = require("../../helpers/async.helper");
 const EventEmitter = require('events');
 const RequestModel = require("./models/request-model");
+const ResponseModel = require("./models/response-model");
 
 class RabbitMQEngine extends BaseEngine {
     constructor(amqp, amqpSettings) {
@@ -82,12 +83,17 @@ class RabbitMQEngine extends BaseEngine {
     /**
      * @param {RequestModel} message 
      * @param {boolean} waitForAnswer 
-     * @returns {Promise<RequestModel>}
+     * @returns {Promise<any>}
      */
     triggerReceive(message, waitForAnswer) {
         return new Promise((resolve, reject) => {
-            this.events.emit("receive", message, reply => {
-                resolve(reply);
+            this.events.emit("receive", message, (reply, err) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(reply);
+                }
             });
 
             if (!waitForAnswer) {
@@ -123,7 +129,15 @@ class RabbitMQEngine extends BaseEngine {
     async _processMessage(msg, properties) {
         const request = RequestModel.parse(msg);
 
-        const reply = await this.triggerReceive(request, this.isBidirectional && properties.replyTo);
+        let reply;
+
+        try {
+            const data = await this.triggerReceive(request, this.isBidirectional && properties.replyTo);
+            reply = new ResponseModel(request.id, request.url, data, {}, 200);
+        }
+        catch (err) {
+            reply = new ResponseModel(request.id, request.url, err, {}, 500);
+        }
 
         if (this.isBidirectional && reply) {
             this.channel.sendToQueue(
@@ -161,7 +175,7 @@ class RabbitMQEngine extends BaseEngine {
                 this.channel.prefetch(1);
             }
 
-            this.channel.consume(this.model.queueName, function (msg) {
+            this.channel.consume(this.model.queueName, (msg) => {
                 this._processMessage(msg.content.toString(), msg.properties || {});
 
                 if (this.ackRequired) {
@@ -185,7 +199,7 @@ class RabbitMQEngine extends BaseEngine {
 
             await this.channel.bindQueue(this.queue.queue, this.exchange.exchange, '');
 
-            this.channel.consume(this.model.queueName, function (msg) {
+            this.channel.consume(this.model.queueName, msg => {
                 this._processMessage(msg.content.toString(), msg.properties || {});
 
                 if (this.ackRequired) {

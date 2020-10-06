@@ -31,104 +31,37 @@ class AmqpRouter extends AbstractRouter {
      */
     async _process(request, callback) {
         const action = this.actions[request.url];
-        if (action) {
-            const reply = action(request);
-
-            if (reply instanceof Promise) {
-                reply = await reply;
+        try {
+            if (action) {
+                const reply = action(request);
+    
+                if (reply instanceof Promise) {
+                    reply = await reply;
+                }
+    
+                callback(reply);
             }
-
-            callback(reply);
+        }
+        catch(err) {
+            this.handleError(err, e => callback(null, e));
         }
     }
 
-    registerAction(url, fn) {
+    /**
+     * @todo Parse middlewares.
+     */
+    registerAction(url, actionFn, middlewares) {
         url = this._normalizeUrl(url);
 
-        this.actions[url] = fn;
+        this.actions[url] = actionFn;
     }
 
-    post(url, action, middlewares, app) {
-        app = app || this.app;
-
-        if (url === "" || (url && url[0] !== "/")) {
-            url = this.baseUrl + url;
-        }
-
-        if (!middlewares) {
-            app.post(url, (req, res) => {
-                let result = action(req, res);
-                this.processResult(req, res, result);
-            });
-        }
-        else {
-            app.post(url, middlewares, (req, res) => {
-                let result = action(req, res);
-                this.processResult(req, res, result);
-            });
-        }
-    }
-
-    get(url, action, middlewares, app) {
-        app = app || this.app;
-
-        if (url === "" || (url && url[0] !== "/")) {
-            url = this.baseUrl + url;
-        }
-
-        if (!middlewares) {
-            app.get(url, (req, res) => {
-                let result = action(req, res);
-                this.processResult(req, res, result);
-            });
-        }
-        else {
-            app.get(url, middlewares, (req, res) => {
-                let result = action(req, res);
-                this.processResult(req, res, result);
-            });
-        }
-    }
-
-    processResult(req, res, result) {
-        let emptyResult = this.routerSettings.emptyResult;
-        if (typeof emptyResult === "undefined") {
-            emptyResult = {};
-        }
-
-        if (result instanceof Promise) {
-            result.then(obj => {
-                if (typeof obj === "undefined") {
-                    res.json(emptyResult);
-                }
-                else {
-                    res.json(obj);
-                }
-            }, err => {
-                this.handleError(req, res, err);
-            });
-        }
-        else {
-            if (typeof result === "undefined") {
-                res.json(emptyResult);
-            }
-            else {
-                res.json(result);
-            }
-        }
-    }
-
-    handleError(_req, res, error) {
+    handleError(error, errorCallback) {
         if (this.routerSettings.printHandledErrors) {
             console.error(error);
         }
 
-        if (error instanceof Error) {
-            res.status(500).json({ error: { message: error.message, stack: error.stack } });
-        }
-        else {
-            res.status(500).json({ error });
-        }
+        errorCallback(error);
     }
 
     /**

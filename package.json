@@ -4,7 +4,9 @@
   "description": "Core Library for Emvicify Framework",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "test:cv": "npm run test:coverage",
+    "test:coverage": "nyc --reporter=text mocha"
   },
   "author": "lcnvdl",
   "license": "MIT",

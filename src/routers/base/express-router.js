@@ -14,15 +14,13 @@ class ExpressRouter extends AbstractRouter {
         this.engine = null;
     }
 
-    register({ expressEngine }) {
+    registerEngines({ expressEngine }) {
         if (!expressEngine) {
             return;
         }
 
         this.engine = expressEngine;
         this.app = expressEngine.app;
-
-        this.registerActions();
     }
 
     post(url, action, middlewares, app) {

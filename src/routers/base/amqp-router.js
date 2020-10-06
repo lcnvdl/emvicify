@@ -16,15 +16,13 @@ class AmqpRouter extends AbstractRouter {
         this.actions = {};
     }
 
-    register({ amqpEngine }) {
+    registerEngines({ amqpEngine }) {
         if (!amqpEngine) {
             return;
         }
 
         this.engine = amqpEngine;
         this.engine.onReceive((request, callback) => this._process(request, callback));
-
-        this.registerActions();
     }
 
     /**

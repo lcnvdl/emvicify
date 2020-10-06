@@ -17,6 +17,17 @@ class AbstractRouter {
         }
     }
 
+    register(engines) {
+        this.registerEngines(engines);
+        this.registerActions();
+    }
+
+    /**
+     * @virtual
+     */
+    registerEngines(engines) {
+    }
+
     /**
      * @abstract
      */

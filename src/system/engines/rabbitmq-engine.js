@@ -183,7 +183,7 @@ class RabbitMQEngine extends BaseEngine {
                 this.channel.prefetch(1);
             }
 
-            await this.channel.bindQueue(this.queue.queue, this.exchange, '');
+            await this.channel.bindQueue(this.queue.queue, this.exchange.exchange, '');
 
             this.channel.consume(this.model.queueName, function (msg) {
                 this._processMessage(msg.content.toString(), msg.properties || {});
@@ -206,7 +206,7 @@ class RabbitMQEngine extends BaseEngine {
                 this.channel.prefetch(1);
             }
 
-            await this.channel.bindQueue(this.queue.queue, this.exchange, this.model.key);
+            await this.channel.bindQueue(this.queue.queue, this.exchange.exchange, this.model.key);
 
             this.channel.consume(this.model.queueName, async (msg) => {
                 await this._processMessage(msg.content.toString(), msg.properties || {});

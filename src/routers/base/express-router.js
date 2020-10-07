@@ -23,46 +23,50 @@ class ExpressRouter extends AbstractRouter {
         this.app = expressEngine.app;
     }
 
-    post(url, action, middlewares, app) {
+    _parseUrl(url) {
+        let finalUrl;
+        if (url === "" || (url && url[0] !== "/")) {
+            finalUrl = this.baseUrl + url;
+        }
+        else {
+            finalUrl = url;
+        }
+        return finalUrl;
+    }
+
+    _callAction(url, method, action, middlewares, app) {
         app = app || this.app;
 
-        if (url === "" || (url && url[0] !== "/")) {
-            url = this.baseUrl + url;
-        }
+        url = this._parseUrl(url);
 
         if (!middlewares) {
-            app.post(url, (req, res) => {
+            app[method](url, (req, res) => {
                 let result = action(req, res);
                 this.processResult(req, res, result);
             });
         }
         else {
-            app.post(url, middlewares, (req, res) => {
+            app[method](url, middlewares, (req, res) => {
                 let result = action(req, res);
                 this.processResult(req, res, result);
             });
         }
     }
 
+    post(url, action, middlewares, app) {
+        this._callAction(url, "post", action, middlewares, app);
+    }
+
     get(url, action, middlewares, app) {
-        app = app || this.app;
+        this._callAction(url, "get", action, middlewares, app);
+    }
 
-        if (url === "" || (url && url[0] !== "/")) {
-            url = this.baseUrl + url;
-        }
+    delete(url, action, middlewares, app) {
+        this._callAction(url, "delete", action, middlewares, app);
+    }
 
-        if (!middlewares) {
-            app.get(url, (req, res) => {
-                let result = action(req, res);
-                this.processResult(req, res, result);
-            });
-        }
-        else {
-            app.get(url, middlewares, (req, res) => {
-                let result = action(req, res);
-                this.processResult(req, res, result);
-            });
-        }
+    put(url, action, middlewares, app) {
+        this._callAction(url, "put", action, middlewares, app);
     }
 
     processResult(req, res, result) {

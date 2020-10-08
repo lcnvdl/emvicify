@@ -102,8 +102,11 @@ class ExpressRouter extends AbstractRouter {
             console.error(error);
         }
 
-        if (error instanceof Error) {
-            res.status(500).json({ error: { message: error.message, stack: error.stack } });
+        if (typeof error === "string") {
+            res.status(500).json({ message: error, stack: null });
+        }
+        else if (error instanceof Error) {
+            res.status(500).json({ message: error.message, stack: error.stack });
         }
         else {
             res.status(500).json({ error });

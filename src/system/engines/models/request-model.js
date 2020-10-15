@@ -22,7 +22,8 @@ class RequestModel {
     }
 
     static parse(str) {
-        const { id, url, data, headers } = JSON.parse(str);
+        const jsonObject = (typeof str === "string") ? JSON.parse(str) : str;
+        const { id, url, data, headers } = jsonObject;
         return new RequestModel(id, url, data, headers);
     }
 }

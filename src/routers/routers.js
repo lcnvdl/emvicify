@@ -3,6 +3,7 @@ const BaseRouter = require("./base/base-router");
 const ExpressRouter = require("./base/express-router");
 const SocketsRouter = require("./base/sockets-router");
 const AmqpRouter = require("./base/amqp-router");
+const JsonFSRouter = require("./base/json-fs-router");
 
 module.exports = {
     /** @deprecated */
@@ -10,5 +11,6 @@ module.exports = {
     ExpressRouter,
     SocketsRouter,
     AbstractRouter,
-    AmqpRouter
+    AmqpRouter,
+    JsonFSRouter
 };

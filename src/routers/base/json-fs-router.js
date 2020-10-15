@@ -1,27 +1,27 @@
-/** @typedef {import("../../system/engines/rabbitmq-engine")} RabbitEngine */
+/** @typedef {import("../../system/engines/json-fs-engine")} JsonFSEngine */
 /** @typedef {import("../../system/engines/models/request-model")} RequestModel */
 
 const AbstractRouter = require("./abstract-router");
 
 /**
- * Router for Amqp.
+ * Router for Json Files Exchange.
  */
-class AmqpRouter extends AbstractRouter {
+class JsonFSRouter extends AbstractRouter {
     constructor(objects) {
         super(objects);
 
         this.app = null;
-        /** @type {RabbitEngine} */
+        /** @type {JsonFSEngine} */
         this.engine = null;
         this.actions = {};
     }
 
-    registerEngines({ amqpEngine }) {
-        if (!amqpEngine) {
+    registerEngines({ jsonFsEngine }) {
+        if (!jsonFsEngine) {
             return;
         }
 
-        this.engine = amqpEngine;
+        this.engine = jsonFsEngine;
         this.engine.onReceive((request, callback) => this._process(request, callback));
     }
 
@@ -80,4 +80,4 @@ class AmqpRouter extends AbstractRouter {
     }
 }
 
-module.exports = AmqpRouter;
+module.exports = JsonFSRouter;

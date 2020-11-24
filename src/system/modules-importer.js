@@ -2,13 +2,17 @@ const path = require('path');
 const fs = require('fs');
 const camelCase = require("camelcase");
 
-async function importModule(baseFolder, name, modules) {
+async function importModule(baseFolder, name, modules, settings) {
+    settings = settings || {};
+
+    const getMemberNameFn = settings.getMemberName || getMemberName;
+
     await importFiles(baseFolder, "src", name, f => {
-        modules[name][getMemberName(f)] = new (require(f))(modules);
+        modules[name][getMemberNameFn(f)] = new (require(f))(modules);
     });
 
     await importFiles(baseFolder, "app", name, f => {
-        modules[name][getMemberName(f)] = new (require(f))(modules);
+        modules[name][getMemberNameFn(f)] = new (require(f))(modules);
     });
 }
 

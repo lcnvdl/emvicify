@@ -1,6 +1,6 @@
 const { asyncForEach } = require("../helpers/async.helper");
 const { importModule } = require("./modules-importer");
-
+const { getPluginMemberName } = require("./misc");
 const ExpressEngine = require("./engines/express-engine");
 
 const fs = require("fs");
@@ -75,8 +75,18 @@ async function start(
     return new Promise((resolve, reject) => {
         asyncForEach(
             ["middlewares", "services", "controllers", "routers", "plugins"],
-            name => importModule(baseFolder, name, modules)).then(() => {
+            name => importModule(baseFolder, name, modules, {
+                getMemberName: (name === "plugins") ? getPluginMemberName : null
+            })).then(() => {
                 Object.values(modules.routers).forEach(router => router.register(allEngines));
+
+                Object.values(modules.plugins)
+                    .filter(m => m.pluginName && m.pluginName !== "")
+                    .forEach(m => {
+                        if (!modules.plugins.pluginName) {
+                            modules.plugins.pluginName = m;
+                        }
+                    });
 
                 Object.values(modules.plugins)
                     .filter(p => p.events && p.events.configureAppBeforeServe)

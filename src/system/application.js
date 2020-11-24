@@ -83,8 +83,8 @@ async function start(
                 Object.values(modules.plugins)
                     .filter(m => m.pluginName && m.pluginName !== "")
                     .forEach(m => {
-                        if (!modules.plugins.pluginName) {
-                            modules.plugins.pluginName = m;
+                        if (!modules.plugins[m.pluginName]) {
+                            modules.plugins[m.pluginName] = m;
                         }
                     });
 

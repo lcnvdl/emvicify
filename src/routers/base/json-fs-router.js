@@ -33,7 +33,7 @@ class JsonFSRouter extends AbstractRouter {
         const action = this.actions[request.url];
         try {
             if (action) {
-                const reply = action(request);
+                let reply = action(request);
     
                 if (reply instanceof Promise) {
                     reply = await reply;

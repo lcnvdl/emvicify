@@ -77,17 +77,19 @@ class ExpressRouter extends AbstractRouter {
 
         if (result instanceof Promise) {
             result.then(obj => {
-                if (typeof obj === "undefined") {
-                    res.json(emptyResult);
-                }
-                else {
-                    res.json(obj);
+                if (!res.finished) {
+                    if (typeof obj === "undefined") {
+                        res.json(emptyResult);
+                    }
+                    else {
+                        res.json(obj);
+                    }
                 }
             }, err => {
                 this.handleError(req, res, err);
             });
         }
-        else {
+        else if (!res.finished) {
             if (typeof result === "undefined") {
                 res.json(emptyResult);
             }

@@ -1,6 +1,6 @@
 {
   "name": "emvicify",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "description": "Core Library for Emvicify Framework",
   "main": "index.js",
   "scripts": {
@@ -11,17 +11,17 @@
   "author": "lcnvdl",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^8.1.3",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3",
     "nyc": "^15.1.0"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "camelcase": "^6.0.0",
+    "camelcase": "^6.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-jwt": "^6.0.0",
+    "express-jwt": "^6.1.0",
     "jsonwebtoken": "^8.5.1",
     "promises-operators": "^1.0.0"
   }
